@@ -17,7 +17,9 @@ app.use(cors({
 app.use(cookieParser())
 
 import userRouter from './routes/user.routes.js'
+import groupRouter from './routes/group.routes.js'
 
 app.use("/api/v1/users",userRouter)
+app.use("/api/v1/groups",groupRouter)
 
 export {app};

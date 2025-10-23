@@ -42,7 +42,7 @@ const LoginAndRegister=()=>{
             if (response.data.success) {
                 localStorage.setItem("userData",JSON.stringify(response.data.data.user));
                 localStorage.setItem("accessToken", response.data.data.accessToken);
-                console.log("Login Successful");
+                navigate("/User");
             }
         } catch (error) {
             console.error(
@@ -54,14 +54,14 @@ const LoginAndRegister=()=>{
     };
 
     return (
-        <div className="absolute w-full max-w-lg mt-40 bg-[#5a06f638] border-gray-500 border p-10 rounded-2xl shadow-xl">
+        <div className="absolute w-full max-w-lg bg-[#5a06f638] border-gray-500 border p-10 rounded-2xl shadow-xl">
         <h2 className="text-white text-3xl font-bold text-center mb-10">{action}</h2>
             <form
                 className="flex flex-col items-center gap-10 text-amber-50"
                 onSubmit={handleSubmit}
             >
                 {action==="Register"&&
-                    <div className="w-[400px] h-[40px] bg-[#5a06f638] border-gray-500 border rounded-3xl flex items-center p-5">
+                    <div className="w-[400px] h-10 bg-[#5a06f638] border-gray-500 border rounded-3xl flex items-center p-5">
                     <input
                         placeholder="Name"
                         type="text"
@@ -72,7 +72,7 @@ const LoginAndRegister=()=>{
                     />
                 </div>
                 }
-                <div className="w-[400px] h-[40px] bg-[#5a06f638] border-gray-500 border rounded-3xl flex items-center p-5">
+                <div className="w-[400px] h-10 bg-[#5a06f638] border-gray-500 border rounded-3xl flex items-center p-5">
                     <input
                         placeholder="Email"
                         type="email"
@@ -83,7 +83,7 @@ const LoginAndRegister=()=>{
                     />
                 </div>
 
-                <div className="w-[400px] h-[40px] bg-[#5a06f638] border-gray-500 border rounded-3xl flex items-center p-5">
+                <div className="w-[400px] h-10 bg-[#5a06f638] border-gray-500 border rounded-3xl flex items-center p-5">
                     <input
                         placeholder="Password"
                         type="password"
