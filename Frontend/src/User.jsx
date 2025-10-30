@@ -1,10 +1,14 @@
 import { useState, useEffect, lazy } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
+import Groups from "./Groups";
 
 const User = () => {
   const [user, setUser] = useState(null);
   const [title, setTitle] = useState("");
+  const [joiningCode,setJoiningCode]=useState("");
+  const [groups,setGroups]=useState([]);
   const [groupAction, setGroupAction] = useState("");
   const navigate = useNavigate();
 
@@ -13,6 +17,26 @@ const User = () => {
     localStorage.removeItem("accessToken");
     navigate("/");
   };
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchGroups = async () => {
+        try {
+            const accessToken = localStorage.getItem("accessToken");
+            const endPoint="/getJoinedGroups"
+            const response = await axios.get(`http://localhost:8000/api/v1/groups${endPoint}`, {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            });
+            localStorage.setItem("joinedGroups",response);
+            setGroups(response.data.data);
+
+        } catch (error) {
+            console.error("Error fetching posted jobs:", error.response?.data?.message || error.message);
+        }
+    };
+
+    fetchGroups();
+}, [user]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("userData");
@@ -33,8 +57,8 @@ const User = () => {
     e.preventDefault();
 
     const access = localStorage.getItem("accessToken");
-    const payload = { title };
-    const endpoint = "/api/v1/groups/createGroup";
+    const payload = groupAction==="Create Group"?{ title }:{joiningCode};
+    const endpoint = groupAction==="Create Group"?"/api/v1/groups/createGroup":"/api/v1/groups/createJoiningRequest";
     try {
       const response = await axios.post(
         `http://localhost:8000${endpoint}`,
@@ -46,9 +70,27 @@ const User = () => {
           },
         }
       );
+      toast.success(response.data.message || "Success!");
       setGroupAction("");
     } catch (err) {
-      console.error("Failed to create group:", err);
+      console.log(err);
+
+      if (err.response) {
+        const status = err.statusCode;
+        const message = err.response?.data?.message || "Something went wrong";
+  
+        if (status === 409) {
+          toast.warn(message);
+        } else if (status === 400) {
+          toast.error(message);
+        } else {
+          toast.error(message);
+        }
+      } else {
+        toast.error("Server unreachable. Please try again later.");
+      }
+  
+      console.error(`Failed to ${groupAction}:`, err);
     }
   };
   if (!user) {
@@ -94,6 +136,28 @@ const User = () => {
               Join Group
             </button>
           )}
+          {groupAction === "Join Group" && (
+            <form
+              className="flex flex-col items-center gap-10 text-amber-50"
+              onSubmit={handleSubmit}
+            >
+              <input
+                placeholder="Enter Code here"
+                type="text"
+                value={joiningCode}
+                onChange={(e) => setJoiningCode(e.target.value)}
+                className="p-3 w-full border border-gray-500 rounded-4xl bg-transparent outline-none text-amber-50"
+                autoComplete="off"
+              ></input>
+
+              <button
+                type="submit"
+                className="bg-[#5a06f638] border-2 border-gray-400 rounded-4xl h-[50px] w-[150px] text-gray-400 hover:bg-white hover:text-black"
+              >
+                Join Group
+              </button>
+            </form>
+          )}
 
           {groupAction === "" && (
             <button
@@ -115,7 +179,7 @@ const User = () => {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="p-3 w-full bg-transparent outline-none text-amber-50"
+                className="p-3 w-full border border-gray-500 rounded-4xl bg-transparent outline-none text-amber-50"
                 autoComplete="off"
               ></input>
 
@@ -130,8 +194,14 @@ const User = () => {
         </div>
       </div>
       {/* Group Details*/}
-      <div className="bg-[#5f1cef46] border border-gray-500 text-amber-50 w-full h-[50%]">
-        No group joined yet. {user.joinedGroups.length}
+      <div className="bg-[#5f1cef46] border border-gray-500 text-amber-50 w-full h-auto">
+      <div className="flex flex-wrap ml-[100px]">
+                            {groups.length > 0 ? (
+                                groups.map((group) => (
+                                <Groups key={group._id} resData={group} />
+                            ))) : (
+                            <p className="text-center">No Groups to show.</p>
+                    )}</div>
       </div>
     </div>
   );

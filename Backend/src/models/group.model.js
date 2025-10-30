@@ -10,18 +10,27 @@ const groupSchema=new Schema(
         joiningCode: 
         { 
           type: String, 
-          required: true 
+          required: true,
+          unique: true 
         },
         membersList: [
           { 
-            type: String, 
+            type: Schema.Types.ObjectId, 
+            ref: "User" 
           }
         ],
         groupAdmin: 
         { 
           type: Schema.Types.ObjectId, 
           ref: "User",
+          required: true
         },
+        joiningRequest: [
+          { 
+            type: Schema.Types.ObjectId, 
+            ref: "User" 
+          }
+        ],
       }, { timestamps: true }
 );
 

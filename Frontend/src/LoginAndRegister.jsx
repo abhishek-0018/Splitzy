@@ -38,7 +38,6 @@ const LoginAndRegister=()=>{
                 userData,
                 { headers }
             );
-
             if (response.data.success) {
                 localStorage.setItem("userData",JSON.stringify(response.data.data.user));
                 localStorage.setItem("accessToken", response.data.data.accessToken);

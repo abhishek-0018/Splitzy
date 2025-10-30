@@ -30,4 +30,64 @@ const createGroup=asyncHandler(async(req,res)=>{
 
 })
 
-export {createGroup}
+const createJoiningRequest =asyncHandler(async(req,res)=>{
+    const {joiningCode}=req.body;
+
+    if (!joiningCode) {
+        throw new ApiError(400, "Joining code is required");
+    }
+    
+    const groupExist= await Group.findOne({joiningCode});
+    if (!groupExist){
+        throw new ApiError(409,"No group with such joining code exists");
+    }
+
+    let joiningRequest = groupExist.joiningRequest;
+    let membersJoined = groupExist.membersList;
+    
+    if (joiningRequest.some(reqId => reqId.toString() === req.user._id.toString())) {
+      throw new ApiError(409, "Already requested to join");
+    }
+    
+    if (membersJoined.some(memberId => memberId.toString() === req.user._id.toString())) {
+      throw new ApiError(409, "Already a member in this group");
+    }
+    joiningRequest.push(req.user._id);
+
+    const response=await Group.findByIdAndUpdate(
+        groupExist._id,
+        {
+            $set:{
+                joiningRequest:joiningRequest
+            }
+        },
+        {new:true}
+        )
+
+        return res.status(200).json(
+            new ApiResponse(200,response,"Joining request send successfully")
+        )
+})
+
+const getJoinedGroups=asyncHandler(async(req,res)=>{
+    const userId = req.user._id;
+
+    const groups = await Group.find({
+    $or: [
+      { groupAdmin: userId },
+      { membersList: { $in: [userId] } }
+    ]
+  }).select(
+    "title membersList"
+);
+
+    if (!groups) {
+        throw new ApiError(404, "You are not a member of any group yet");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, groups, "Groups fetched successfully"));
+})
+
+export {createGroup,createJoiningRequest,getJoinedGroups}

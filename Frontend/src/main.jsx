@@ -4,7 +4,10 @@ import ReactDOM from "react-dom/client";
 import LandingPage from './LandingPage';
 import LoginAndRegister from './LoginAndRegister';
 import User from './User';
+import GroupDetail from './GroupDetail';
 import DarkVeil from './DarkVeil';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 const AppLayout = () => {
   return (
@@ -13,6 +16,7 @@ const AppLayout = () => {
           <DarkVeil />
       </div>
       <Outlet />
+      <ToastContainer position="top-right" autoClose={3000} theme="dark" />
     </div>
   );
 };
@@ -24,7 +28,8 @@ const appRouter = createBrowserRouter([
     children: [
       { path: "/",element: (<LandingPage/>)},
       { path: "/Login", element: (<LoginAndRegister/>)},
-      { path: "/User", element: (<User/>)}
+      { path: "/User", element: (<User/>)},
+      { path: "/GroupDetail/:title", element: (<GroupDetail/>)}
     ],
   },
 ]);
