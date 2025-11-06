@@ -78,7 +78,7 @@ const getJoinedGroups=asyncHandler(async(req,res)=>{
       { membersList: { $in: [userId] } }
     ]
   }).select(
-    "title membersList"
+    "title membersList groupAdmin"
 );
 
     if (!groups) {
@@ -90,4 +90,18 @@ const getJoinedGroups=asyncHandler(async(req,res)=>{
         .json(new ApiResponse(200, groups, "Groups fetched successfully"));
 })
 
-export {createGroup,createJoiningRequest,getJoinedGroups}
+const getGroup = asyncHandler(async (req, res) => {
+    const {user,groupId} = req.query;
+    if(!groupId){
+      throw new ApiError(400, "Group ID is required");
+    }
+    const group=user==="Admin"?await Group.findById(groupId).select("-updatedAt"):await Group.findById(groupId).select("-updatedAt -joiningRequest");
+    if (!group) {
+      throw new ApiError(404, "No group found");
+    }
+    return res
+      .status(200)
+      .json(new ApiResponse(200, group, "Group fetched successfully"));
+  });
+
+export {createGroup,createJoiningRequest,getJoinedGroups,getGroup}

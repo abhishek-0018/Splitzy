@@ -2,11 +2,16 @@ import { Motion } from "./Motion";
 import { Link } from "react-router-dom";
 
 const Groups = ({ resData }) =>{
+    const currentUser = JSON.parse(localStorage.getItem("userData"));
+    if (!currentUser) {
+        console.warn("No currentUser found in localStorage.");
+        return null;
+      }
     return (
         <Motion>
             <Link
                 to={`/GroupDetail/${resData.title}`}
-                state={{ group: resData }}
+                state={{ group: resData, user:currentUser }}
                 className="hover:scale-105 transition-transform duration-300"
                 >   
                 <div className="flex justify-between items-center bg-linear-to-b from-slate-800 to-violet-800 gap-7 m-7 rounded-3xl p-2 w-[200px] h-[100px] hover:bg-linear-to-b hover:from-amber-50 hover:to-amber-50 hover:text-black">

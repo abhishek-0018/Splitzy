@@ -8,7 +8,9 @@ import GroupDetail from './GroupDetail';
 import DarkVeil from './DarkVeil';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
-
+import AddPayment from './AddPayment';
+import JoiningRequests from './JoiningRequests';
+import PaymentApprovals from '../PaymentApprovals';
 const AppLayout = () => {
   return (
     <div className='w-full h-screen flex justify-center items-center relative'>
@@ -26,10 +28,18 @@ const appRouter = createBrowserRouter([
     path: "/",
     element: <AppLayout />,
     children: [
-      { path: "/",element: (<LandingPage/>)},
-      { path: "/Login", element: (<LoginAndRegister/>)},
-      { path: "/User", element: (<User/>)},
-      { path: "/GroupDetail/:title", element: (<GroupDetail/>)}
+      { path: "/", element: <LandingPage /> },
+      { path: "/Login", element: <LoginAndRegister /> },
+      { path: "/User", element: <User /> },
+      {
+        path: "/GroupDetail/:title",
+        element: <GroupDetail />,
+        children: [
+          { index: true, element: <AddPayment /> },
+          { path: "joining-requests", element: <JoiningRequests /> },
+          { path: "payment-approvals", element: <PaymentApprovals /> },
+        ],
+      },
     ],
   },
 ]);
