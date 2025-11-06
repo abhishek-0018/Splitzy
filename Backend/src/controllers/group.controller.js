@@ -91,11 +91,11 @@ const getJoinedGroups=asyncHandler(async(req,res)=>{
 })
 
 const getGroup = asyncHandler(async (req, res) => {
-    const {user,groupId} = req.query;
+    const {userStatus,groupId} = req.query;
     if(!groupId){
       throw new ApiError(400, "Group ID is required");
     }
-    const group=user==="Admin"?await Group.findById(groupId).select("-updatedAt"):await Group.findById(groupId).select("-updatedAt -joiningRequest");
+    const group=userStatus==="Admin"?await Group.findById(groupId).select("-updatedAt"):await Group.findById(groupId).select("-updatedAt -joiningRequest");
     if (!group) {
       throw new ApiError(404, "No group found");
     }

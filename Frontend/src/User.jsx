@@ -10,19 +10,38 @@ const User = () => {
   const [joiningCode,setJoiningCode]=useState("");
   const [groups,setGroups]=useState([]);
   const [groupAction, setGroupAction] = useState("");
+  const accessToken = localStorage.getItem("accessToken");
   const navigate = useNavigate();
 
-  const Logout = () => {
+  const Logout = async () => {
+    try {
+      await axios.post(
+        "http://localhost:8000/api/v1/users/logout",
+        {}, // no body needed
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } catch (error) {
+      console.error(
+        "Error while logging out:",
+        error.response?.data?.message || error.message
+      );
+    }
     localStorage.removeItem("userData");
+    localStorage.removeItem("currentGroup");
     localStorage.removeItem("accessToken");
+
     navigate("/");
-  };
+  }
 
   useEffect(() => {
     if (!user) return;
     const fetchGroups = async () => {
         try {
-            const accessToken = localStorage.getItem("accessToken");
             const endPoint="/getJoinedGroups"
             const response = await axios.get(`http://localhost:8000/api/v1/groups${endPoint}`, {
                 headers: { Authorization: `Bearer ${accessToken}` },
@@ -31,7 +50,7 @@ const User = () => {
             setGroups(response.data.data);
 
         } catch (error) {
-            console.error("Error fetching posted jobs:", error.response?.data?.message || error.message);
+            console.error("Error fetching joined groups:", error.response?.data?.message || error.message);
         }
     };
 
