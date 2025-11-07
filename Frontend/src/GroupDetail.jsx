@@ -49,8 +49,8 @@ const GroupDetail = () => {
 
   return (
     <div className="absolute flex  h-[90%] w-[90%] gap-2 text-amber-50">
-      <div className="bg-[#5a06f638] border-gray-500 border rounded-tl-2xl rounded-bl-2xl shadow-xl flex flex-col items-center h-full w-[25%] gap-2">
-        <div className="p-3 flex flex-col items-center gap-5">
+      <div className="bg-[#5a06f638] border-white border rounded-tl-2xl rounded-bl-2xl shadow-xl flex flex-col items-center h-full w-[50%] gap-2">
+        <div className="p-3 flex flex-col items-center gap-5 w-full">
           <img
             src={groupImage}
             alt="Image"
@@ -59,12 +59,12 @@ const GroupDetail = () => {
           <p>Name: {groupDetail.title}</p>
           <p>Joining Code: {groupDetail.joiningCode}</p>
         </div>
-        <hr className="bg-amber-50 w-full" />
+        <hr className="bg-white h-0.5 w-full" />
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 w-full h-full justify-evenly items-center">
           <button
             onClick={() => navigate("")}
-            className="bg-[#5a06f638] border-2 border-gray-400 h-[50px] w-[325px] text-gray-400 hover:bg-white hover:text-black"
+            className="bg-[#5a06f638] border-2 cursor-pointer transition duration-300 ease-in-out border-white h-[50px] w-[90%] text-white hover:bg-white hover:text-black hover:scale-105"
           >
             Enter Payment Details
           </button>
@@ -72,7 +72,7 @@ const GroupDetail = () => {
           {userStatus === "Admin" && (
             <button
               onClick={() => navigate("joining-requests")}
-              className="bg-[#5a06f638] border-2 border-gray-400 h-[50px] w-[325px] text-gray-400 hover:bg-white hover:text-black"
+              className="bg-[#5a06f638] border-2 cursor-pointer transition duration-300 ease-in-out border-white h-[50px] w-[90%] text-white hover:bg-white hover:text-black hover:scale-105"
             >
               Joining Request
             </button>
@@ -80,14 +80,14 @@ const GroupDetail = () => {
 
           <button
             onClick={() => navigate("payment-approvals")}
-            className="bg-[#5a06f638] border-2 border-gray-400 h-[50px] w-[325px] text-gray-400 hover:bg-white hover:text-black"
+            className="bg-[#5a06f638] border-2 cursor-pointer transition duration-300 ease-in-out border-white h-[50px] w-[90%] text-white hover:bg-white hover:text-black hover:scale-105"
           >
             Payment Approvals
           </button>
         </div>
       </div>
 
-      <div className="bg-[#5a06f638] border-gray-500 border rounded-tr-2xl rounded-br-2xl shadow-xl flex flex-col items-center h-full w-full gap-2">
+      <div className="bg-[#5a06f638] border-white border rounded-tr-2xl rounded-br-2xl shadow-xl flex flex-col items-center h-full w-full gap-2">
         <Outlet context={{ group: groupDetail, currentUser, userStatus }} />
       </div>
     </div>

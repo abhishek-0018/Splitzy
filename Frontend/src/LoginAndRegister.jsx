@@ -53,63 +53,63 @@ const LoginAndRegister=()=>{
     };
 
     return (
-        <div className="absolute w-full max-w-lg bg-[#5a06f638] border-gray-500 border p-10 rounded-2xl shadow-xl">
+        <div className="absolute w-full max-w-lg bg-[#5a06f638] border-white border p-10 rounded-2xl shadow-xl">
         <h2 className="text-white text-3xl font-bold text-center mb-10">{action}</h2>
             <form
-                className="flex flex-col items-center gap-10 text-amber-50"
+                className="flex flex-col items-center gap-10 text-white"
                 onSubmit={handleSubmit}
             >
                 {action==="Register"&&
-                    <div className="w-[400px] h-10 bg-[#5a06f638] border-gray-500 border rounded-3xl flex items-center p-5">
+                    <div className="w-[400px] h-10 bg-[#5a06f638] border-white border rounded-3xl flex items-center p-5">
                     <input
                         placeholder="Name"
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="p-3 w-full bg-transparent outline-none text-amber-50"
+                        className="p-3 w-full bg-transparent outline-none text-white"
                         autoComplete="off"
                     />
                 </div>
                 }
-                <div className="w-[400px] h-10 bg-[#5a06f638] border-gray-500 border rounded-3xl flex items-center p-5">
+                <div className="w-[400px] h-10 bg-[#5a06f638] border-white border rounded-3xl flex items-center p-5">
                     <input
                         placeholder="Email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="p-3 w-full bg-transparent outline-none text-amber-50"
+                        className="p-3 w-full bg-transparent outline-none text-white"
                         autoComplete="off"
                     />
                 </div>
 
-                <div className="w-[400px] h-10 bg-[#5a06f638] border-gray-500 border rounded-3xl flex items-center p-5">
+                <div className="w-[400px] h-10 bg-[#5a06f638] border-white border rounded-3xl flex items-center p-5">
                     <input
                         placeholder="Password"
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="p-3 w-full bg-transparent outline-none text-amber-50"
+                        className="p-3 w-full bg-transparent outline-none text-white"
                         autoComplete="off"
                     />
                 </div>
 
                 <button
                     type="submit"
-                    className="bg-[#5a06f638] border-2 border-gray-400 rounded-4xl h-[50px] w-[150px] text-gray-400 hover:bg-white hover:text-black"
+                    className="bg-[#5a06f638] cursor-pointer transition duration-300 ease-in-out border-2 border-white rounded-4xl h-[50px] w-[150px] text-white hover:bg-white hover:text-black"
                     onClick={handleSubmit}
                 >
                     {action}
                 </button>
             </form>
             {action==="Login"&&
-            <div className=" text-gray-400 text-[16px] mt-10">
+            <div className=" text-white text-[16px] mt-10">
                     Don't have an account?{" "}
-                <button className="cursor-pointer text-indigo-700" onClick={changeAction}>Register</button>
+                <button className="cursor-pointer transition duration-300 ease-in-out text-indigo-700" onClick={changeAction}>Register</button>
             </div>}
             {action==="Register"&&
-            <div className=" text-gray-400 text-[16px] mt-10">
+            <div className=" text-white text-[16px] mt-10">
                     Already have an account?{" "}
-                <button className="cursor-pointer text-indigo-700" onClick={changeAction}>Lofin</button>
+                <button className="cursor-pointer transition duration-300 ease-in-out text-indigo-700" onClick={changeAction}>Login</button>
             </div>}
         </div>
     )

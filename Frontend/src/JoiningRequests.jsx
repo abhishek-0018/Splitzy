@@ -23,8 +23,12 @@ const JoiningRequestCard=({userData})=>{
   },[]);
   if(!user) return;
   return (
-    <div className="bg-amber-50 h-[50px] w-full text-black">
+    <div className="flex justify-between items-center border-2 transition duration-300 ease-in-out border-amber-50 bg-linear-to-b from-slate-800 to-violet-800 gap-7 rounded-3xl p-2 w-[40%] h-[60px] hover:bg-linear-to-b hover:scale-105">
       {user.gotuser.name}
+      <div className="flex justify-between items-center gap-4">
+        <button className="bg-green-500 border-2 cursor-pointer transition duration-300 ease-in-out border-green-700 rounded-2xl h-8 w-16 text-center hover:scale-110">Accept</button>
+        <button className="bg-red-500 border-2 cursor-pointer transition duration-300 ease-in-out border-red-700 rounded-2xl h-8 w-16 text-center hover:scale-110">Reject</button>
+      </div>
     </div>
   )
 }
@@ -35,7 +39,7 @@ const JoiningRequests = () => {
     return <p className="text-white text-center">No group data found.</p>;
   }
   return (
-    <div className="p-4 text-white">
+    <div className="flex flex-col gap-5 p-4 text-white w-full">
       <h2>Joining Requests for {group.title}</h2>
       <p>User: {currentUser.name}</p>
       <p>Status: {userStatus}</p>

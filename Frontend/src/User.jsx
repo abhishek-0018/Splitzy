@@ -34,6 +34,7 @@ const User = () => {
     localStorage.removeItem("userData");
     localStorage.removeItem("currentGroup");
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("joinedGroups");
 
     navigate("/");
   }
@@ -90,7 +91,6 @@ const User = () => {
         }
       );
       toast.success(response.data.message || "Success!");
-      setGroupAction("");
     } catch (err) {
       console.log(err);
 
@@ -111,6 +111,7 @@ const User = () => {
   
       console.error(`Failed to ${groupAction}:`, err);
     }
+    setGroupAction("");
   };
   if (!user) {
     return (
@@ -122,7 +123,7 @@ const User = () => {
     <div className="absolute flex flex-col h-[90%] w-[90%] gap-2">
       <div className="w-full h-[50%] flex gap-2">
         {/* Profile Section */}
-        <div className="bg-[#5a06f638] border-gray-500 border rounded-tl-2xl shadow-xl flex flex-col items-center h-full w-[50%] gap-2">
+        <div className="bg-[#5a06f638] border-white border rounded-tl-2xl shadow-xl flex flex-col items-center h-full w-[50%] gap-2">
           <div className="flex justify-center mt-5">
             <img
               className="h-[200px] w-[200px] rounded-full"
@@ -134,7 +135,7 @@ const User = () => {
             />
           </div>
           <button
-            className="bg-[#100E0E] border-2 border-gray-400 rounded-4xl h-[50px] w-[150px] text-gray-400 hover:bg-white hover:text-black"
+            className="bg-[#100E0E] transition duration-300 ease-in-out border-2 border-white rounded-4xl h-[50px] w-[150px] text-white hover:bg-white hover:text-black hover:scale-105"
             onClick={Logout}
           >
             Logout
@@ -144,10 +145,10 @@ const User = () => {
           </div>
         </div>
         {/* Group forming and joinig section*/}
-        <div className="bg-[#5a06f638] border-gray-500 border p-10 rounded-tr-2xl shadow-xl flex h-full w-[50%] justify-center items-center gap-3">
+        <div className="bg-[#5a06f638] border-white border p-10 rounded-tr-2xl shadow-xl flex h-full w-[50%] justify-center items-center gap-3">
           {groupAction === "" && (
             <button
-              className="bg-[#100E0E] border-2 border-gray-400 rounded-4xl h-[50px] w-[150px] text-gray-400 hover:bg-white hover:text-black"
+              className="bg-[#100E0E] cursor-pointer transition duration-300 ease-in-out border-2 border-white rounded-4xl h-[50px] w-[150px] text-white hover:bg-white hover:text-black"
               onClick={() => {
                 setGroupAction("Join Group");
               }}
@@ -165,13 +166,13 @@ const User = () => {
                 type="text"
                 value={joiningCode}
                 onChange={(e) => setJoiningCode(e.target.value)}
-                className="p-3 w-full border border-gray-500 rounded-4xl bg-transparent outline-none text-amber-50"
+                className="p-3 w-full border border-white rounded-4xl bg-transparent outline-none text-amber-50"
                 autoComplete="off"
               ></input>
 
               <button
                 type="submit"
-                className="bg-[#5a06f638] border-2 border-gray-400 rounded-4xl h-[50px] w-[150px] text-gray-400 hover:bg-white hover:text-black"
+                className="bg-[#5a06f638] cursor-pointer transition duration-300 ease-in-out border-2 border-white rounded-4xl h-[50px] w-[150px] text-white hover:bg-white hover:text-black"
               >
                 Join Group
               </button>
@@ -180,7 +181,7 @@ const User = () => {
 
           {groupAction === "" && (
             <button
-              className="bg-[#100E0E] border-2 border-gray-400 rounded-4xl h-[50px] w-[150px] text-gray-400 hover:bg-white hover:text-black"
+              className="bg-[#100E0E] cursor-pointer border-2 transition duration-300 ease-in-out border-white rounded-4xl h-[50px] w-[150px] text-white hover:bg-white hover:text-black"
               onClick={() => {
                 setGroupAction("Create Group");
               }}
@@ -198,13 +199,13 @@ const User = () => {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="p-3 w-full border border-gray-500 rounded-4xl bg-transparent outline-none text-amber-50"
+                className="p-3 w-full border border-white rounded-4xl bg-transparent outline-none text-amber-50"
                 autoComplete="off"
               ></input>
 
               <button
                 type="submit"
-                className="bg-[#5a06f638] border-2 border-gray-400 rounded-4xl h-[50px] w-[150px] text-gray-400 hover:bg-white hover:text-black"
+                className="bg-[#5a06f638] cursor-pointer transition duration-300 ease-in-out border-2 border-white rounded-4xl h-[50px] w-[150px] text-white hover:bg-white hover:text-black"
               >
                 Create Group
               </button>
@@ -213,7 +214,7 @@ const User = () => {
         </div>
       </div>
       {/* Group Details*/}
-      <div className="bg-[#5f1cef46] border border-gray-500 text-amber-50 w-full h-auto">
+      <div className="bg-[#5f1cef46] border border-white text-white w-full h-auto">
       <div className="flex flex-wrap ml-[100px]">
                             {groups.length > 0 ? (
                                 groups.map((group) => (
