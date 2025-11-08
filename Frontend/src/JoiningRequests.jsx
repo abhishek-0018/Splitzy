@@ -1,11 +1,30 @@
 import { useOutletContext } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import JoiningRequestCard from "./JoiningRequestCard";
+import axios from "axios";
 
 const JoiningRequests = () => {
-  const { group, currentUser, userStatus } = useOutletContext();
+  const { group, userStatus } = useOutletContext();
+  const [requests, setRequests] = useState([]);
 
-  const [requests, setRequests] = useState(group?.joiningRequest || []);
+  useEffect(()=>{
+    if (!group) return;
+    const fetchGroup = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/v1/groups/getGroup`,
+          { params: { userStatus, groupId: group._id } }
+        );
+        setRequests(response.data.data.joiningRequest);
+      } catch (error) {
+        console.error(
+          "Error fetching group details:",
+          error.response?.data?.message || error.message
+        );
+      }
+    };
+    fetchGroup();
+  },[]);
 
   const handleRequestAction = (userId) => {
     setRequests((prev) => prev.filter((r) => r !== userId));
