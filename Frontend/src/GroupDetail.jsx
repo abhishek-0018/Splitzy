@@ -48,8 +48,8 @@ const GroupDetail = () => {
     return <p className="absolute text-center mt-20">Loading....</p>;
 
   return (
-    <div className="absolute flex  h-[90%] w-[90%] gap-2 text-amber-50">
-      <div className="bg-[#5a06f638] border-white border rounded-tl-2xl rounded-bl-2xl shadow-xl flex flex-col items-center h-full w-[50%] gap-2">
+    <div className="flex  h-full w-[90%] gap-2 text-amber-50">
+      <div className="bg-[#5a06f638] border-white border rounded-tl-2xl rounded-bl-2xl shadow-xl flex flex-col items-center h-[95%] w-[50%] gap-2">
         <div className="p-3 flex flex-col items-center gap-5 w-full">
           <img
             src={groupImage}
@@ -71,7 +71,7 @@ const GroupDetail = () => {
 
           {userStatus === "Admin" && (
             <button
-              onClick={() => navigate("joining-requests")}
+              onClick={() => navigate("joiningRequests")}
               className="bg-[#5a06f638] border-2 cursor-pointer transition duration-300 ease-in-out border-white h-[50px] w-[90%] text-white hover:bg-white hover:text-black hover:scale-105"
             >
               Joining Request
@@ -79,15 +79,22 @@ const GroupDetail = () => {
           )}
 
           <button
-            onClick={() => navigate("payment-approvals")}
+            onClick={() => navigate("paymentApprovals")}
             className="bg-[#5a06f638] border-2 cursor-pointer transition duration-300 ease-in-out border-white h-[50px] w-[90%] text-white hover:bg-white hover:text-black hover:scale-105"
           >
             Payment Approvals
           </button>
+
+          <button
+            onClick={() => navigate("membersList")}
+            className="bg-[#5a06f638] border-2 cursor-pointer transition duration-300 ease-in-out border-white h-[50px] w-[90%] text-white hover:bg-white hover:text-black hover:scale-105"
+          >
+            Members List
+          </button>
         </div>
       </div>
 
-      <div className="bg-[#5a06f638] border-white border rounded-tr-2xl rounded-br-2xl shadow-xl flex flex-col items-center h-full w-full gap-2">
+      <div className="bg-[#5a06f638] border-white border rounded-tr-2xl rounded-br-2xl shadow-xl flex flex-col items-center h-[95%] w-full gap-2">
         <Outlet context={{ group: groupDetail, currentUser, userStatus }} />
       </div>
     </div>

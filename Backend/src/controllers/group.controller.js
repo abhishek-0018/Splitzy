@@ -27,8 +27,7 @@ const createGroup=asyncHandler(async(req,res)=>{
     return res.status(201).json(
         new ApiResponse(200, createdGroup, "Group is created Successfully")
     )
-
-})
+});
 
 const createJoiningRequest =asyncHandler(async(req,res)=>{
     const {joiningCode}=req.body;
@@ -67,7 +66,7 @@ const createJoiningRequest =asyncHandler(async(req,res)=>{
         return res.status(200).json(
             new ApiResponse(200,response,"Joining request send successfully")
         )
-})
+});
 
 const getJoinedGroups=asyncHandler(async(req,res)=>{
     const userId = req.user._id;
@@ -88,7 +87,7 @@ const getJoinedGroups=asyncHandler(async(req,res)=>{
     return res
         .status(200)
         .json(new ApiResponse(200, groups, "Groups fetched successfully"));
-})
+});
 
 const getGroup = asyncHandler(async (req, res) => {
     const {userStatus,groupId} = req.query;
@@ -102,6 +101,48 @@ const getGroup = asyncHandler(async (req, res) => {
     return res
       .status(200)
       .json(new ApiResponse(200, group, "Group fetched successfully"));
-  });
+});
 
-export {createGroup,createJoiningRequest,getJoinedGroups,getGroup}
+const handleJoiningRequest =asyncHandler(async(req,res)=>{
+  const {groupId,requester,action}=req.body;
+
+  if(!groupId||!requester||!action){
+    throw new ApiError(400,"Not all field are given");
+  }
+
+  const group = await Group.findById(groupId);
+
+  if(!group){
+    throw new ApiError(409,"No such group exists");
+  }
+
+  let joiningRequest = group.joiningRequest;
+  let membersJoined = group.membersList;
+
+  let index = joiningRequest.indexOf(requester);
+  if (index > -1) {
+      joiningRequest.splice(index, 1);
+  }
+
+  if(action==="Accept"){
+    membersJoined.push(requester);
+  }
+
+  const response=await Group.findByIdAndUpdate(
+    group._id,
+    {
+        $set:{
+            joiningRequest:joiningRequest,
+            membersList:membersJoined
+        }
+    },
+    {new:true}
+    )
+
+    return res.status(200).json(
+        new ApiResponse(200,response,"Operation successfully")
+    )
+
+});
+
+export {createGroup,createJoiningRequest,getJoinedGroups,getGroup,handleJoiningRequest}

@@ -1,0 +1,79 @@
+import { useOutletContext } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
+const MembersCard = ({ userData, groupAdmin }) => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/v1/users/getUser`,
+          { params: { user: userData } }
+        );
+        setUser(response.data.data);
+      } catch (error) {
+        console.error(
+          "Error fetching User details:",
+          error.response?.data?.message || error.message
+        );
+      }
+    };
+    fetchUser();
+  }, []);
+
+  if (!user) return;
+  return (
+    <div className="flex justify-between items-center border-2 transition duration-300 ease-in-out border-amber-50 bg-linear-to-b from-slate-800 to-violet-800 gap-7 rounded-3xl p-2 w-40 h-[60px] hover:bg-linear-to-b hover:scale-105">
+      {user.gotuser.name}
+      {user.gotuser._id === groupAdmin && <p>Admin</p>}
+    </div>
+  );
+};
+
+const MembersList = () => {
+  const { group, userStatus } = useOutletContext();
+  const [membersList,setMembersList]=useState([]);
+
+  useEffect(()=>{
+    if (!group) return;
+    const fetchGroup = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/v1/groups/getGroup`,
+          { params: { userStatus, groupId: group._id } }
+        );
+        setMembersList(response.data.data.membersList);
+      } catch (error) {
+        console.error(
+          "Error fetching group details:",
+          error.response?.data?.message || error.message
+        );
+      }
+    };
+    fetchGroup();
+  },[]);
+  if (!group) {
+    return <p className="text-white text-center">No group data found.</p>;
+  }
+  return (
+    <div className="flex flex-col gap-5 p-4 text-white w-full text-center">
+      <div className="text-white text-4xl my-4">Members List</div>
+      <div className="flex flex-wrap flex-col gap-5">
+      {membersList.length > 0 ? (
+        membersList.map((req, index) => (
+          <MembersCard
+            key={req._id || index}
+            userData={req}
+            groupAdmin={group.groupAdmin}
+          />
+        ))
+      ) : (
+        <p className="text-center mt-4">No members to show.</p>
+      )}
+      </div>
+    </div>
+  );
+};
+export default MembersList;
