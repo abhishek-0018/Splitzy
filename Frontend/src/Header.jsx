@@ -1,5 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 const Header = () => {
   const navigate = useNavigate();
@@ -7,7 +9,7 @@ const Header = () => {
   const Logout = async () => {
     try {
       await axios.post(
-        "http://localhost:8000/api/v1/users/logout",
+        `${API_URL}/api/v1/users/logout`,
         {},
         {
           headers: {

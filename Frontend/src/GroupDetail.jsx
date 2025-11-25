@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import groupImage from "./assets/Group1.png";
 import { useLocation, Outlet, useNavigate } from "react-router-dom";
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 const GroupDetail = () => {
   const [groupDetail, setGroupDetail] = useState(null);
@@ -30,7 +32,7 @@ const GroupDetail = () => {
     const fetchGroup = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/groups/getGroup`,
+          `${API_URL}/api/v1/groups/getGroup`,
           { params: { userStatus, groupId: group._id } }
         );
         setGroupDetail(response.data.data);

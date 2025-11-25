@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Groups from "./Groups";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const User = () => {
   const [user, setUser] = useState(null);
@@ -17,9 +18,8 @@ const User = () => {
     if (!user) return;
     const fetchGroups = async () => {
       try {
-        const endPoint = "/getJoinedGroups";
         const response = await axios.get(
-          `http://localhost:8000/api/v1/groups${endPoint}`,
+          `${API_URL}/api/v1/groups/getJoinedGroups`,
           {
             headers: { Authorization: `Bearer ${accessToken}` },
           }
@@ -64,7 +64,7 @@ const User = () => {
         : "/api/v1/groups/createJoiningRequest";
     try {
       const response = await axios.post(
-        `http://localhost:8000${endpoint}`,
+        `${API_URL}${endpoint}`,
         payload,
         {
           headers: {

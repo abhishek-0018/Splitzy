@@ -1,5 +1,7 @@
 import { useState,useEffect } from "react";
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 const JoiningRequestCard=({ userData, groupId, onAction })=>{
   const [user,setUser]=useState(null);
@@ -8,7 +10,7 @@ const JoiningRequestCard=({ userData, groupId, onAction })=>{
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/users/getUser`,
+          `${API_URL}/api/v1/users/getUser`,
           { params: { user:userData } }
         );
         setUser(response.data.data);
@@ -27,7 +29,7 @@ const JoiningRequestCard=({ userData, groupId, onAction })=>{
     const payload = { groupId, requester:userData, action };
     try {
       const response = await axios.post(
-      "http://localhost:8000/api/v1/groups/handleJoiningRequest",
+      `${API_URL}/api/v1/groups/handleJoiningRequest`,
         payload,
         {
           headers: {

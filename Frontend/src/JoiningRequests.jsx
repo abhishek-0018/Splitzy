@@ -6,13 +6,15 @@ import axios from "axios";
 const JoiningRequests = () => {
   const { group, userStatus } = useOutletContext();
   const [requests, setRequests] = useState([]);
+  const API_URL = import.meta.env.VITE_API_URL;
+
 
   useEffect(()=>{
     if (!group) return;
     const fetchGroup = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/groups/getGroup`,
+          `${API_URL}/api/v1/groups/getGroup`,
           { params: { userStatus, groupId: group._id } }
         );
         setRequests(response.data.data.joiningRequest);

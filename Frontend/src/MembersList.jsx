@@ -1,6 +1,8 @@
 import { useOutletContext } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 const MembersCard = ({ userData, groupAdmin }) => {
   const [user, setUser] = useState(null);
@@ -9,7 +11,7 @@ const MembersCard = ({ userData, groupAdmin }) => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/users/getUser`,
+          `${API_URL}/api/v1/users/getUser`,
           { params: { user: userData } }
         );
         setUser(response.data.data);
@@ -41,7 +43,7 @@ const MembersList = () => {
     const fetchGroup = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/groups/getGroup`,
+          `${API_URL}/api/v1/groups/getGroup`,
           { params: { userStatus, groupId: group._id } }
         );
         setMembersList(response.data.data.membersList);
