@@ -1,14 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
+import axios from "axios";
+import SelectMembersCard from "./SelectMembersCard";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const AddPayment = () => {
   const [amount, setAmount] = useState(0);
   const [splitType, setSplitType] = useState("");
+  const { group, userStatus } = useOutletContext();
+  const [membersList,setMembersList]=useState([]);
+  const [selectedMembers,setSelectedMembers]=useState([]);
+
+  const addMember=(memberId,state)=>{
+    setSelectedMembers((prev) =>
+    state === "selected"
+      ? [...prev, memberId]
+      : prev.filter((id) => id !== memberId)
+    );
+    console.log(memberId);
+  }
+
+  useEffect(()=>{
+    if (!group) return;
+    const fetchGroup = async () => {
+      try {
+        const response = await axios.get(
+          `${API_URL}/api/v1/groups/getGroup`,
+          { params: { userStatus, groupId: group._id } }
+        );
+        setMembersList(response.data.data.membersList);
+      } catch (error) {
+        console.error(
+          "Error fetching group details:",
+          error.response?.data?.message || error.message
+        );
+      }
+    };
+    fetchGroup();
+  },[]);
+  if (!group) {
+    return <p className="text-white text-center">No group data found.</p>;
+  }
 
   return (
     <div className="flex flex-col h-full w-full items-center gap-12">
       <p className="text-white text-4xl">Add Payment</p>
 
-      <form className="flex flex-col w-[90%]">
+      <form className="flex flex-col w-[90%]"  onSubmit={(e) => e.preventDefault()}>
         <label className="flex gap-2 items-center">
         Enter Amount:
         <input
@@ -63,7 +101,21 @@ const AddPayment = () => {
           <span className="text-white">Unequal</span>
         </label>
 
-        {splitType==="Equal"&&{}}
+        {splitType!==""&&(
+          <div className="flex flex-wrap flex-col gap-5">
+            Select Members
+          {membersList.length > 0 ? (
+            membersList.map((req,index) => (
+              <SelectMembersCard
+                key={index}
+                userData={req}
+                onAction={(state)=>addMember(req,state)}
+              />
+            ))
+          ) : (
+            <p className="text-center mt-4">No members to show.</p>
+          )}</div>)
+        }
       </form>
     </div>
   );
