@@ -3,6 +3,7 @@ import {ApiError} from "../utils/ApiError.js"
 import {Group} from "../models/group.model.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { nanoid } from 'nanoid';
+import { Payment } from "../models/payment.js";
 
 const createGroup=asyncHandler(async(req,res)=>{
     const {title}=req.body;
@@ -145,4 +146,29 @@ const handleJoiningRequest =asyncHandler(async(req,res)=>{
 
 });
 
-export {createGroup,createJoiningRequest,getJoinedGroups,getGroup,handleJoiningRequest}
+const addPayment = asyncHandler(async(req,res)=>{
+  const {groupid,payerid,selectedMembers,amount,description}=req.body;
+
+  if(!groupid|| !payerid|| !selectedMembers|| !amount){
+    throw new ApiError(400,"Not all fields are given");
+  }
+
+  const payment= await Payment.create({
+    groupid,
+    payerid,
+    amount,
+    beneficiaries:selectedMembers,
+    description,
+    status:"Not approved"
+  })
+
+  if(!payment){
+    throw new ApiError(500,"Something went wrong while adding payment.")
+  }
+
+  return res.status(201).json(
+    new ApiResponse(200, payment, "Payment added successfully")
+  )
+})
+
+export {createGroup,createJoiningRequest,getJoinedGroups,getGroup,handleJoiningRequest,addPayment}

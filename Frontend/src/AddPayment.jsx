@@ -5,9 +5,10 @@ import SelectMembersCard from "./SelectMembersCard";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const AddPayment = () => {
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState();
   const [splitType, setSplitType] = useState("");
-  const { group, userStatus } = useOutletContext();
+  const [description,setDescription] =useState("");
+  const { group,userStatus, currentUser } = useOutletContext();
   const [membersList,setMembersList]=useState([]);
   const [selectedMembers,setSelectedMembers]=useState([]);
 
@@ -17,7 +18,44 @@ const AddPayment = () => {
       ? [...prev, memberId]
       : prev.filter((id) => id !== memberId)
     );
-    console.log(memberId);
+  }
+
+  const handleSubmit=async(e)=>{
+    e.preventDefault();
+
+    const access = localStorage.getItem("accessToken");
+
+    const paymentData=new FormData();
+    paymentData.append("groupid",group._id);
+    paymentData.append("selectedMembers",selectedMembers);
+    paymentData.append("amount",amount);
+    paymentData.append("payerid",currentUser._id);
+    paymentData.append("description",description);
+
+    try {
+      const response = await axios.post(
+          `${API_URL}/api/v1/groups/addPayment`,
+          paymentData,
+          {
+            headers: {
+              Authorization: `Bearer ${access}`,
+              "Content-Type": "application/json",
+            },
+          }
+      );
+      if (response.data.success) {
+          setAmount();
+          setDescription("");
+          setSelectedMembers([]);
+          setSplitType("");
+      }
+  } catch (error) {
+      console.error(
+          "Error:",
+          error.response?.data?.message || "Something went wrong"
+      );
+      alert(error.response?.data?.message || "Error during authentication");
+  }
   }
 
   useEffect(()=>{
@@ -46,15 +84,31 @@ const AddPayment = () => {
     <div className="flex flex-col h-full w-full items-center gap-12">
       <p className="text-white text-4xl">Add Payment</p>
 
-      <form className="flex flex-col w-[90%]"  onSubmit={(e) => e.preventDefault()}>
-        <label className="flex gap-2 items-center">
-        Enter Amount:
+      <form className="flex flex-col w-[90%]"  onSubmit={handleSubmit}>
+        <div className="flex gap-3">
+        <label className="flex gap-8 items-center">
+        Amount:
         <input
           className="border-2 border-white h-10 w-100 rounded-2xl p-4"
           type="number"
           placeholder="Enter Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
+        />
+        </label>
+        <button type="submit" className="bg-[#100E0E] transition duration-300 ease-in-out border-2 border-white rounded-4xl h-[50px] w-[150px] text-white hover:bg-white hover:text-black hover:scale-105">
+          Add Payment
+        </button>
+        </div>
+
+        <label className="flex gap-2 items-center">
+        Description:
+        <input
+          className="border-2 border-white h-10 w-100 rounded-2xl p-4"
+          type="text"
+          placeholder="Where did you paid?"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
         </label>
         <p className="text-white mt-4">Split type:</p>

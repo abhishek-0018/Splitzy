@@ -1,35 +1,49 @@
 import mongoose,{ Schema } from "mongoose";
 
-const groupSchema=new Schema(
+const paymentSchema=new Schema(
     {
-        title: 
+        groupid: 
         { 
-          type: String, 
-          required: true 
-        },
-        joiningCode: 
-        { 
-          type: String, 
+          type: Schema.Types.ObjectId,
           required: true,
-          unique: true 
+          ref: "Group" 
         },
-        membersList: [
-          { 
-            type: Schema.Types.ObjectId, 
-            ref: "User" 
-          }
-        ],
-        groupAdmin: 
+        payerid: 
         { 
           type: Schema.Types.ObjectId, 
-          ref: "User",
-          required: true
+          required: true,
+          ref: "User"
         },
-        joiningRequest: [
+        beneficiaries: 
+        [
           { 
             type: Schema.Types.ObjectId, 
-            ref: "User" 
+            ref: "User",
+            required: true
           }
         ],
+        amount: 
+        { 
+          type: Number, 
+          required: true
+        },
+        description:
+        {
+            type: String
+        },
+        approvals:
+        [
+            { 
+              type: Schema.Types.ObjectId, 
+              ref: "User"
+            }
+        ],
+        status:
+        {
+            type: String,
+            enum: ["Approved","Not approved"]
+        }
       }, { timestamps: true }
 );
+
+export const Payment = mongoose.model("Payment", paymentSchema);
