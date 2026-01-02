@@ -14,15 +14,28 @@ const paymentSchema=new Schema(
           required: true,
           ref: "User"
         },
+        splitType: 
+        {
+          type: String,
+          enum: ["Equal", "Unequal"],
+          required: true,
+        },
         beneficiaries: 
         [
-          { 
-            type: Schema.Types.ObjectId, 
-            ref: "User",
-            required: true
-          }
+          {
+            _id:false,
+            user: {
+              type: Schema.Types.ObjectId,
+              ref: "User",
+              required: true,
+            },
+            amount: {
+              type: Number,
+              required: true,
+            },
+          },
         ],
-        amount: 
+        totalAmount: 
         { 
           type: Number, 
           required: true
@@ -41,7 +54,8 @@ const paymentSchema=new Schema(
         status:
         {
             type: String,
-            enum: ["Approved","Not approved"]
+            enum: ["Approved","Pending","Rejected"],
+            default: "Pending"
         }
       }, { timestamps: true }
 );

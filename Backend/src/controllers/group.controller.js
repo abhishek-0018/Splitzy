@@ -147,19 +147,37 @@ const handleJoiningRequest =asyncHandler(async(req,res)=>{
 });
 
 const addPayment = asyncHandler(async(req,res)=>{
-  const {groupid,payerid,selectedMembers,amount,description}=req.body;
+  const {groupid,payerid,selectedMembers,totalAmount,splitType,description}=req.body;
 
-  if(!groupid|| !payerid|| !selectedMembers|| !amount){
+  if(!groupid|| !payerid|| !selectedMembers|| !totalAmount){
     throw new ApiError(400,"Not all fields are given");
+  }
+  const beneficiaries = Object.entries(selectedMembers).map(
+    ([userId, amount]) => ({
+      user: userId,
+      amount: Number(amount),
+    })
+  );
+
+  if (beneficiaries.length === 0) {
+    throw new ApiError(400,"At least one beneficiary required");
+  }
+  
+  if(splitType==="Unequal"){
+    const sum = beneficiaries.reduce((acc, b) => acc + b.amount, 0);
+    if (sum !== Number(totalAmount)) {
+      throw new ApiError(400, "Split amounts do not match total amount");
+    }
   }
 
   const payment= await Payment.create({
     groupid,
     payerid,
-    amount,
-    beneficiaries:selectedMembers,
+    totalAmount,
+    splitType,
+    beneficiaries,
     description,
-    status:"Not approved"
+    status:"Pending"
   })
 
   if(!payment){

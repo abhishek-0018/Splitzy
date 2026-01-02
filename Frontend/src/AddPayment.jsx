@@ -5,37 +5,49 @@ import SelectMembersCard from "./SelectMembersCard";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const AddPayment = () => {
-  const [amount, setAmount] = useState();
+  const [totalAmount, setTotalAmount] = useState();
   const [splitType, setSplitType] = useState("");
   const [description,setDescription] =useState("");
   const { group,userStatus, currentUser } = useOutletContext();
   const [membersList,setMembersList]=useState([]);
-  const [selectedMembers,setSelectedMembers]=useState([]);
+  const [selectedMembers,setSelectedMembers]=useState({});
 
-  const addMember=(memberId,state)=>{
-    setSelectedMembers((prev) =>
-    state === "selected"
-      ? [...prev, memberId]
-      : prev.filter((id) => id !== memberId)
-    );
-  }
+  const addMember = (userId, state, amount = 0) => {
+    setSelectedMembers((prev) => {
+      if (state === "selected") {
+        return { ...prev, [userId]: amount };
+      } else {
+        const copy = { ...prev };
+        delete copy[userId];
+        return copy;
+      }
+    });
+  };
+
+  const updateMemberAmount = (memberId, value) => {
+    setSelectedMembers((prev) => ({
+      ...prev,
+      [memberId]: Number(value),
+    }));
+  };
 
   const handleSubmit=async(e)=>{
     e.preventDefault();
 
     const access = localStorage.getItem("accessToken");
 
-    const paymentData=new FormData();
-    paymentData.append("groupid",group._id);
-    paymentData.append("selectedMembers",selectedMembers);
-    paymentData.append("amount",amount);
-    paymentData.append("payerid",currentUser._id);
-    paymentData.append("description",description);
-
+    const payload = {
+      groupid: group._id,
+      payerid: currentUser._id,
+      splitType,
+      totalAmount,
+      description,
+      selectedMembers,
+    };
     try {
       const response = await axios.post(
           `${API_URL}/api/v1/groups/addPayment`,
-          paymentData,
+          payload,
           {
             headers: {
               Authorization: `Bearer ${access}`,
@@ -44,7 +56,7 @@ const AddPayment = () => {
           }
       );
       if (response.data.success) {
-          setAmount();
+          setTotalAmount();
           setDescription("");
           setSelectedMembers([]);
           setSplitType("");
@@ -55,7 +67,7 @@ const AddPayment = () => {
           error.response?.data?.message || "Something went wrong"
       );
       alert(error.response?.data?.message || "Error during authentication");
-  }
+    }
   }
 
   useEffect(()=>{
@@ -76,6 +88,8 @@ const AddPayment = () => {
     };
     fetchGroup();
   },[]);
+
+
   if (!group) {
     return <p className="text-white text-center">No group data found.</p>;
   }
@@ -92,8 +106,8 @@ const AddPayment = () => {
           className="border-2 border-white h-10 w-100 rounded-2xl p-4"
           type="number"
           placeholder="Enter Amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          value={totalAmount}
+          onChange={(e) => setTotalAmount(e.target.value)}
         />
         </label>
         <button type="submit" className="bg-[#100E0E] transition duration-300 ease-in-out border-2 border-white rounded-4xl h-[50px] w-[150px] text-white hover:bg-white hover:text-black hover:scale-105">
@@ -155,21 +169,24 @@ const AddPayment = () => {
           <span className="text-white">Unequal</span>
         </label>
 
-        {splitType!==""&&(
-          <div className="flex flex-wrap flex-col gap-5">
-            Select Members
-          {membersList.length > 0 ? (
-            membersList.map((req,index) => (
-              <SelectMembersCard
-                key={index}
-                userData={req}
-                onAction={(state)=>addMember(req,state)}
-              />
-            ))
-          ) : (
-            <p className="text-center mt-4">No members to show.</p>
-          )}</div>)
-        }
+        {splitType !== "" && (
+  <div className="flex flex-col gap-5 mt-4">
+    <p className="text-white font-semibold">Select Members</p>
+
+    {membersList.length > 0 ? (
+      membersList.map((memberId, index) => (
+         <SelectMembersCard 
+         key={memberId} 
+         userData={memberId} 
+         split={splitType} 
+         amount={selectedMembers[memberId]} 
+         onAction={(state) => addMember(memberId, state)} 
+         onAmountChange={(val) => updateMemberAmount(memberId, val) } /> ))
+    ) : (
+      <p className="text-center mt-4">No members to show.</p>
+    )}
+  </div>
+)}
       </form>
     </div>
   );
