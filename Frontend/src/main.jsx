@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import AddPayment from './AddPayment';
 import JoiningRequests from './JoiningRequests';
-import PaymentApprovals from '../PaymentApprovals';
+import PaymentApprovals from './PaymentApprovals';
 import MembersList from './MembersList';
 const AppLayout = () => {
   return (

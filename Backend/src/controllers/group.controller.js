@@ -189,4 +189,22 @@ const addPayment = asyncHandler(async(req,res)=>{
   )
 })
 
-export {createGroup,createJoiningRequest,getJoinedGroups,getGroup,handleJoiningRequest,addPayment}
+const paymentLogs=asyncHandler(async(req,res)=>{
+  const {user,group}=req.query;
+
+  if(!user||!group){
+    throw new ApiError(400,"Not every field is provided");
+  }
+
+  const logs = await Payment.find({
+    groupid: group,
+    "beneficiaries.user": user
+  }).select("-approvals");
+
+return res.status(201).json(
+  new ApiResponse(200, logs, "Payment logs fetched successfully")
+)
+
+})
+
+export {createGroup,createJoiningRequest,getJoinedGroups,getGroup,handleJoiningRequest,addPayment,paymentLogs}
