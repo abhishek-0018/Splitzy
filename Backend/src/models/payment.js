@@ -14,6 +14,11 @@ const paymentSchema=new Schema(
           required: true,
           ref: "User"
         },
+        payerName: 
+        { 
+          type: String, 
+          required: true,
+        },
         splitType: 
         {
           type: String,

@@ -173,6 +173,7 @@ const addPayment = asyncHandler(async(req,res)=>{
   const payment= await Payment.create({
     groupid,
     payerid,
+    payerName:req.user.name,
     totalAmount,
     splitType,
     beneficiaries,
@@ -199,12 +200,65 @@ const paymentLogs=asyncHandler(async(req,res)=>{
   const logs = await Payment.find({
     groupid: group,
     "beneficiaries.user": user
-  }).select("-approvals");
+  }).select("-updatedAt");
 
-return res.status(201).json(
-  new ApiResponse(200, logs, "Payment logs fetched successfully")
-)
-
+  return res.status(201).json(
+    new ApiResponse(200, logs, "Payment logs fetched successfully")
+  )
 })
 
-export {createGroup,createJoiningRequest,getJoinedGroups,getGroup,handleJoiningRequest,addPayment,paymentLogs}
+const paymentApproval=asyncHandler(async(req,res)=>{
+  const {action,paymentLog}=req.body;
+
+  if(!action||!paymentLog){
+    throw new ApiError(400,"Not every field is provided.");
+  }
+
+  if(action==="Rejected"){
+    const response=await Payment.findByIdAndUpdate(
+      paymentLog._id,
+      {
+        $set:{
+          status:"Rejected"
+        }
+      },
+      {new:true}
+    )
+    return res.status(201).json(
+      new ApiResponse(200, response, "Payment logs fetched successfully")
+    )
+  }
+
+  let approvals=paymentLog.approvals;
+  approvals.push(req.user._id);
+
+  const response=await Payment.findByIdAndUpdate(
+    paymentLog._id,
+    {
+      $set:{
+        approvals:approvals
+      }
+    },
+    {new:true}
+  )
+
+  if(paymentLog.beneficiaries.length===approvals.length){
+    const output=await Payment.findByIdAndUpdate(
+      paymentLog._id,
+      {
+        $set:{
+          status:"Approved"
+        }
+      },
+      {new:true}
+    )
+    return res.status(201).json(
+      new ApiResponse(200, output, "Payment logs fetched successfully")
+    )
+  }
+  return res.status(201).json(
+    new ApiResponse(200, response, "Payment logs fetched successfully")
+  )
+})
+
+export {createGroup,createJoiningRequest,getJoinedGroups,getGroup,handleJoiningRequest,addPayment,paymentLogs,paymentApproval}
